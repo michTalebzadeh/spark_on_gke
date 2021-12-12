@@ -62,7 +62,7 @@ cd $CURRENT_DIRECTORY
 
 echo `date` ", ===> Submitting spark job"
 
-# example ./generic.ksh -M k8s -A testme.py
+# example ./gke.sh -M gcp -A RandomDataBigQuery.py
 
 #unset PYTHONPATH
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# https://cloud.google.com/architecture/spark-on-kubernetes-engine
-
 # Create a Kubernetes Engine cluster
 
 gcloud config set compute/zone europe-west2-c
