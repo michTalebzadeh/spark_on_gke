@@ -3,7 +3,6 @@ import sys
 from spark_on_gke.src.configure import config
 from pyspark.sql import functions as F
 from pyspark.sql.functions import col, round, current_timestamp, lit
-from pyspark.sql.window import Window
 from spark_on_gke.sparkutils import sparkstuff as s
 from spark_on_gke.othermisc import usedFunctions as uf
 from pyspark.sql.types import *
