@@ -1,0 +1,7 @@
+/sparkutils/__pycache__
+/othermisc/__pycache__
+/conf/__pycache__
+/conf/config.yml
+/deployment/src/scripts/spark-sa.json
+/deployment/src/scripts/properties
+__init__.py
