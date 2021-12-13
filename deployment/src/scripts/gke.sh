@@ -83,7 +83,7 @@ then
         gcloud container clusters get-credentials spark-on-gke --zone $ZONE
         export KUBERNETES_MASTER_IP=$(gcloud container clusters list --filter name=spark-on-gke --format='value(MASTER_IP)')
         echo `date` ", ===> Starting spark-submit"
-        spark-submit --verbose \
+        spark-submit \
            --properties-file ${property_file} \
            --master k8s://https://$KUBERNETES_MASTER_IP:443 \
            --deploy-mode cluster \
