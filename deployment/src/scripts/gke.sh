@@ -42,20 +42,20 @@ fi
 NAMESPACE="spark"
 pyspark_venv="pyspark_venv"
 source_code="spark_on_gke"
-property_file="/home/hduser/dba/bin/python/spark_on_gke/deployment/src/scripts//properties"
-IMAGEDRIVER="eu.gcr.io/axial-glow-224522/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-java8PlusPackages"
+property_file="/home/hduser/dba/bin/python/${source_code}/deployment/src/scripts//properties"
+IMAGEDRIVER="eu.gcr.io/<PROJECT_ID>/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-java8PlusPackages"
 ZONE="europe-west2-c"
 
 CURRENT_DIRECTORY=`pwd`
 CODE_DIRECTORY="/home/hduser/dba/bin/python/"
-CODE_DIRECTORY_CLOUD="gs://axial-glow-224522-spark-on-k8s/codes/"
+CODE_DIRECTORY_CLOUD="gs://<PROJECT_ID>-spark-on-k8s/codes/"
 cd $CODE_DIRECTORY
 [ -f ${source_code}.zip ] && rm -r -f ${source_code}.zip
 echo `date` ", ===> creating source zip directory from  ${source_code}"
 # zip needs to be done at root directory of code
 zip -rq ${source_code}.zip ${source_code}
 gsutil cp ${source_code}.zip $CODE_DIRECTORY_CLOUD
-gsutil cp /home/hduser/dba/bin/python/spark_on_gke/src/${APPLICATION} $CODE_DIRECTORY_CLOUD
+gsutil cp /home/hduser/dba/bin/python/${source_code}/src/${APPLICATION} $CODE_DIRECTORY_CLOUD
 cd $CURRENT_DIRECTORY
 
 echo `date` ", ===> Submitting spark job"
