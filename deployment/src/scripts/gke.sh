@@ -43,14 +43,12 @@ NAMESPACE="spark"
 pyspark_venv="pyspark_venv"
 source_code="spark_on_gke"
 property_file="/home/hduser/dba/bin/python/spark_on_gke/deployment/src/scripts//properties"
-#IMAGEGCP="eu.gcr.io/axial-glow-224522/spark-py:3.1.1"
-IMAGEGCP="eu.gcr.io/axial-glow-224522/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-java8WithPyyaml"
 IMAGEDRIVER="eu.gcr.io/axial-glow-224522/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-container"
 ZONE="europe-west2-c"
 
 CURRENT_DIRECTORY=`pwd`
 CODE_DIRECTORY="/home/hduser/dba/bin/python/"
-CODE_DIRECTORY_CLOUD=" gs://axial-glow-224522-spark-on-k8s/codes/"
+CODE_DIRECTORY_CLOUD="gs://axial-glow-224522-spark-on-k8s/codes/"
 cd $CODE_DIRECTORY
 [ -f ${source_code}.zip ] && rm -r -f ${source_code}.zip
 echo `date` ", ===> creating source zip directory from  ${source_code}"
@@ -70,8 +68,7 @@ if [[ "${MODE}" = "gcp" ]]
 then
         # turn on Kubernetes cluster
          NODES=3
-         #NEXEC=$((NODES-1))
-         NEXEC=$((NODES*2))
+         NEXEC=$((NODES-1))
       
         echo `date` ", ===> Resizing GKE cluster with $NODES nodes"
         gcloud container clusters resize spark-on-gke --num-nodes=$NODES --zone europe-west2-c --quiet
@@ -94,11 +91,12 @@ then
            --conf spark.executor.instances=$NEXEC \
            --conf spark.kubernetes.allocation.batch.size=3 \
            --conf spark.kubernetes.allocation.batch.delay=1 \
-           --conf spark.kubernetes.driver.limit.cores=1 \
-           --conf spark.driver.cores=1 \
-           --conf spark.executor.cores=1 \
-           --conf spark.driver.memory=2000m \
-           --conf spark.executor.memory=2000m \
+           --conf spark.driver.cores=3 \
+           --conf spark.executor.cores=3 \
+           --conf spark.driver.memory=8192m \
+           --conf spark.executor.memory=8192m \
+           --conf spark.dynamicAllocation.enabled=true \
+           --conf spark.dynamicAllocation.shuffleTracking.enabled=true \
            --conf spark.kubernetes.driver.container.image=${IMAGEDRIVER} \
            --conf spark.kubernetes.executor.container.image=${IMAGEDRIVER} \
            --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark-bq \

@@ -7,8 +7,9 @@ from spark_on_gke.sparkutils import sparkstuff as s
 from spark_on_gke.othermisc import usedFunctions as uf
 from pyspark.sql.types import *
 import datetime
-
+import time
 def main():
+    start_time = time.time()
     appName = "RandomDataBigQuery"
     spark_session = s.spark_session(appName)
     spark_session = s.setSparkConfBQ(spark_session)
@@ -23,6 +24,9 @@ def main():
     randomdatabq.loadIntoBQTable(dfRandom)
     lst = (spark_session.sql("SELECT FROM_unixtime(unix_timestamp(), 'dd/MM/yyyy HH:mm:ss.ss') ")).collect()
     print("\nFinished at");uf.println(lst)
+    end_time = time.time()
+    time_elapsed = (end_time - start_time)
+    print(f"""Elapsed time in seconds is {time_elapsed}""")
     spark_session.stop()
 
 class RandomData:
@@ -30,6 +34,7 @@ class RandomData:
         self.spark = spark_session
         self.sc = spark_context
         self.config = config
+        self.values = dict()
 
     def readDataFromBQTable(self):
         dataset = "test"
@@ -46,15 +51,16 @@ class RandomData:
         return {"rows":rows,"maxID":maxID}
   
     def generateRamdomData(self):
-        numRows = 10
-        values = self.getValuesFromBQTable()
-        rows = values["rows"]
-        maxID = values["maxID"]
+        self.values = self.getValuesFromBQTable()
+        rows = self.values["rows"]
+        maxID = self.values["maxID"]
         start = 0
         if (rows == 0):
           start = 1
         else:
           start = maxID + 1
+        numRows = config['GCPVariables']['numRows']
+        print(numRows)
         end = start + numRows
         print("starting at ID = ", start, ",ending on = ", end)
         Range = range(start, end)
@@ -95,14 +101,16 @@ class RandomData:
         print(f"""\n Reading from BigQuery table {fullyQualifiedTableName}\n""")
         # read data to ensure all loaded OK
         read_df = s.loadTableFromBQ(self.spark, dataset, tableName)
-        print("\n rows read in is ",  read_df.count())
+        new_rows = read_df.count()
+        print("\n rows read in is ",  new_rows)
         read_df.select("ID").show(20,False)
-        # check that all rows are there
-        if df2.subtract(read_df).count() == 0:
-            print("Data has been loaded OK to BQ table")
+        ## Tally the number of rows in BigQuery table with what is expected after adding new rows
+        numRows = config['GCPVariables']['numRows']
+        if (new_rows - self.values["rows"] - numRows)  == 0:
+          print("\nRows tally in BigQuery table")
         else:
-            print("Data could not be loaded to BQ table, quitting")
-            sys.exit(1)
+          print("\nRows do not tally in BigQuery table")
+   
 
 if __name__ == "__main__":
   main()
