@@ -43,7 +43,7 @@ NAMESPACE="spark"
 pyspark_venv="pyspark_venv"
 source_code="spark_on_gke"
 property_file="/home/hduser/dba/bin/python/spark_on_gke/deployment/src/scripts//properties"
-IMAGEDRIVER="eu.gcr.io/axial-glow-224522/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-container"
+IMAGEDRIVER="eu.gcr.io/axial-glow-224522/spark-py:3.1.1-scala_2.12-8-jre-slim-buster-java8PlusPackages"
 ZONE="europe-west2-c"
 
 CURRENT_DIRECTORY=`pwd`
